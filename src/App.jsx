@@ -1,12 +1,27 @@
 import { useState, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
 
-function Planet({ position, color, name, setActive }) {
+function CameraController({ target }) {
+  const { camera } = useThree();
+
+  useFrame(() => {
+    if (target) {
+      camera.position.x += (target[0] - camera.position.x) * 0.05;
+      camera.position.y += (target[1] - camera.position.y) * 0.05;
+      camera.position.z += (target[2] + 3 - camera.position.z) * 0.05;
+
+      camera.lookAt(target[0], target[1], target[2]);
+    }
+  });
+
+  return null;
+}
+
+function Planet({ position, color, name, setActive, setTarget }) {
   const meshRef = useRef();
   const [hovered, setHovered] = useState(false);
 
-  // Animation (rotate)
   useFrame(() => {
     meshRef.current.rotation.y += 0.01;
   });
@@ -16,7 +31,10 @@ function Planet({ position, color, name, setActive }) {
       ref={meshRef}
       position={position}
       scale={hovered ? 1.3 : 1}
-      onClick={() => setActive(name)}
+      onClick={() => {
+        setActive(name);
+        setTarget(position);
+      }}
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
     >
@@ -28,6 +46,7 @@ function Planet({ position, color, name, setActive }) {
 
 export default function App() {
   const [active, setActive] = useState(null);
+  const [target, setTarget] = useState(null);
 
   return (
     <div style={{ width: "100vw", height: "100vh", background: "black" }}>
@@ -46,7 +65,14 @@ export default function App() {
         >
           <h2>{active}</h2>
           <p>This is {active} section</p>
-          <button onClick={() => setActive(null)}>Close</button>
+          <button
+            onClick={() => {
+              setActive(null);
+              setTarget(null);
+            }}
+          >
+            Close
+          </button>
         </div>
       )}
 
@@ -56,9 +82,11 @@ export default function App() {
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
 
-        <Planet position={[-3, 0, 0]} color="blue" name="About" setActive={setActive} />
-        <Planet position={[3, 0, 0]} color="purple" name="Projects" setActive={setActive} />
-        <Planet position={[0, 2, -2]} color="green" name="Contact" setActive={setActive} />
+        <CameraController target={target} />
+
+        <Planet position={[-3, 0, 0]} color="blue" name="About" setActive={setActive} setTarget={setTarget} />
+        <Planet position={[3, 0, 0]} color="purple" name="Projects" setActive={setActive} setTarget={setTarget} />
+        <Planet position={[0, 2, -2]} color="green" name="Contact" setActive={setActive} setTarget={setTarget} />
 
         <OrbitControls />
       </Canvas>
