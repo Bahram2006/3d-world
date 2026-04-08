@@ -1,14 +1,24 @@
-import { useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import { useState, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
 
 function Planet({ position, color, name, setActive }) {
+  const meshRef = useRef();
+  const [hovered, setHovered] = useState(false);
+
+  // Animation (rotate)
+  useFrame(() => {
+    meshRef.current.rotation.y += 0.01;
+  });
+
   return (
     <mesh
+      ref={meshRef}
       position={position}
-      onClick={() => {
-        setActive(name);
-      }}
+      scale={hovered ? 1.3 : 1}
+      onClick={() => setActive(name)}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
     >
       <sphereGeometry args={[1, 32, 32]} />
       <meshStandardMaterial color={color} />
