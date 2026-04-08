@@ -61,10 +61,35 @@ export default function App() {
             background: "white",
             color: "black",
             borderRadius: "10px",
+            width: "300px",
           }}
         >
-          <h2>{active}</h2>
-          <p>This is {active} section</p>
+          {active === "About" && (
+            <>
+              <h2>👨‍💻 About Me</h2>
+              <p>I am a frontend developer learning 3D web development.</p>
+            </>
+          )}
+
+          {active === "Projects" && (
+            <>
+              <h2>🚀 Projects</h2>
+              <ul>
+                <li>3D Portfolio Website</li>
+                <li>Task Manager App</li>
+                <li>AI App (coming soon)</li>
+              </ul>
+            </>
+          )}
+
+          {active === "Contact" && (
+            <>
+              <h2>📞 Contact</h2>
+              <p>Email: your@email.com</p>
+              <p>GitHub: github.com/yourname</p>
+            </>
+          )}
+
           <button
             onClick={() => {
               setActive(null);
@@ -84,9 +109,27 @@ export default function App() {
 
         <CameraController target={target} />
 
-        <Planet position={[-3, 0, 0]} color="blue" name="About" setActive={setActive} setTarget={setTarget} />
-        <Planet position={[3, 0, 0]} color="purple" name="Projects" setActive={setActive} setTarget={setTarget} />
-        <Planet position={[0, 2, -2]} color="green" name="Contact" setActive={setActive} setTarget={setTarget} />
+        <Planet
+          position={[-3, 0, 0]}
+          color="blue"
+          name="About"
+          setActive={setActive}
+          setTarget={setTarget}
+        />
+        <Planet
+          position={[3, 0, 0]}
+          color="purple"
+          name="Projects"
+          setActive={setActive}
+          setTarget={setTarget}
+        />
+        <Planet
+          position={[0, 2, -2]}
+          color="green"
+          name="Contact"
+          setActive={setActive}
+          setTarget={setTarget}
+        />
 
         <OrbitControls />
       </Canvas>
